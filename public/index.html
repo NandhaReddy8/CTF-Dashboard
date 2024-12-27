@@ -11,6 +11,9 @@
             color: #333;
             margin: 0;
             padding: 0;
+            display: flex;
+            overflow-x: hidden;
+            position: relative;
         }
         header {
             background-color: #2c3e50;
@@ -18,17 +21,67 @@
             padding: 10px 20px;
             text-align: center;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        header h1 {
-            margin: 0;
+        .sidebar {
+            width: 200px;
+            background-color: #34495e;
+            color: #ecf0f1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            top: 0;
+            left: -200px;
+            height: 100%;
+            transition: left 0.3s ease-in-out;
+            z-index: 1000;
         }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
+        .sidebar.open {
+            left: 0;
+        }
+        .sidebar button {
+            background-color: #3498db;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .sidebar button:hover {
+            background-color: #2980b9;
+        }
+        .toggle-button {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1100;
+        }
+        .toggle-button:hover {
+            background-color: #34495e;
+        }
+        .content {
+            flex-grow: 1;
             padding: 20px;
             background: #ffffff;
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            max-width: 800px;
+            transition: margin-left 0.3s ease-in-out;
+            position: relative;
+            z-index: 10;
         }
         .question-box {
             margin: 20px 0;
@@ -36,120 +89,174 @@
             border: 1px solid #bdc3c7;
             border-radius: 8px;
             background: #f9f9f9;
-        }
-        .question-box:hover {
-            background: #e9f5f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .question-box p {
             margin: 10px 0;
-            font-size: 1rem;
-            line-height: 1.5;
         }
-        label {
-            font-weight: bold;
-            margin-right: 5px;
-        }
-        input[type="text"] {
-            width: calc(100% - 20px);
+        .sub-question {
+            margin-top: 15px;
             padding: 10px;
+            background: #ecf9ff;
+            border-left: 4px solid #3498db;
+            border-radius: 5px;
+            position: relative;
+        }
+        .sub-question button {
             margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-        button {
-            margin-top: 10px;
-            padding: 10px 20px;
             background-color: #3498db;
-            color: #fff;
             border: none;
-            border-radius: 5px;
+            padding: 5px 10px;
+            color: white;
+            border-radius: 3px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.9rem;
+            position: absolute;
+            right: 10px;
+            top: 10px;
         }
-        button:hover {
+        .sub-question button:hover {
             background-color: #2980b9;
         }
         .result {
             margin-top: 10px;
             font-weight: bold;
-            font-size: 1rem;
         }
-        footer {
-            text-align: center;
+        input[type="text"] {
+            width: calc(100% - 70px);
             padding: 10px;
-            background-color: #2c3e50;
-            color: #ecf0f1;
-            position: relative;
-            bottom: 0;
-            width: 100%;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Capture The Flag (CTF) Dashboard</h1>
-    </header>
-    <div class="container">
-        <div class="question-box">
-            <p><strong>Q1:</strong> Analyze the below pcap file and get the password from the HTTP request on examplesite.com. What is the password used?</p>
-            <a href="/files/sample.pcap" download>Download File</a><br><br>
-            <label for="answer">Answer:</label>
-            <input type="text" id="answer" placeholder="Enter the password"><br>
-            <button onclick="submitAnswer()">Submit</button>
-            <p class="result" id="result"></p>
-        </div>
+    <button class="toggle-button" onclick="toggleSidebar()">☰ Menu</button>
+    <div class="sidebar" id="sidebar">
+        <h2>Modules</h2>
+        <button onclick="loadModule('networking')">Module 1: Networking</button>
+        <button onclick="loadModule('linux')">Module 2: Linux File System</button>
+        <button onclick="loadModule('redteaming')">Module 3: Red Teaming Activities</button>
+    </div>
 
-        <div class="question-box">
-            <p><strong>Q2:</strong> Decode the following Base64 string: "SGVsbG8sIFdvcmxkIQ==". What is the decoded message?</p>
-            <label for="answer2">Answer:</label>
-            <input type="text" id="answer2" placeholder="Enter the decoded message"><br>
-            <button onclick="submitAnswer2()">Submit</button>
-            <p class="result" id="result2"></p>
+    <div class="content" id="content">
+        <header>
+            <h1>Capture The Flag (CTF) Dashboard</h1>
+        </header>
+        <div class="question-box" id="questions">
+            <p>Select a module from the sidebar to begin!</p>
         </div>
     </div>
-    <footer>
-        <p>&copy; 2024 CTF Labs. All rights reserved.</p>
-    </footer>
 
     <script>
-        function submitAnswer() {
-            const answer = document.getElementById('answer').value;
+        const sidebar = document.getElementById('sidebar');
 
-            fetch('/validate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ answer }),
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                const resultElement = document.getElementById('result');
-                if (data.correct) {
-                    resultElement.style.color = 'green';
-                    resultElement.textContent = 'Correct answer!';
-                } else {
-                    resultElement.style.color = 'red';
-                    resultElement.textContent = 'Wrong answer, try again.';
-                }
-            })
-            .catch((error) => console.error('Error:', error));
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
         }
 
-        function submitAnswer2() {
-            const answer = document.getElementById('answer2').value;
+        const modules = {
+            networking: [
+                {
+                    mainQuestion: 'Bob and Alice are network administrators trying to figure out VLANs for specific roles (HR, Development, Accounts, Security). Analyze the network 199.0.0.0/16.',
+                    file: '/files/sample.pcap',
+                    subQuestions: [
+                        'What is the subnet of the network?',
+                        'What is the first address of the network?',
+                        'What is the last usable address of the network?'
+                    ]
+                }
+            ],
+            linux: [
+                {
+                    mainQuestion: 'Explore the Linux file system dump to find hidden flags.',
+                    file: '/files/linux_dump.tar.gz',
+                    subQuestions: [
+                        'What is the SUID binary found in the dump?',
+                        'What is the owner of the /etc/passwd file?',
+                        'What is the content of the secret file in /root?'
+                    ]
+                }
+            ],
+            redteaming: [
+                {
+                    mainQuestion: 'Simulate a pivot attack by analyzing credentials provided and accessing other systems.',
+                    file: '/files/credentials.txt',
+                    subQuestions: [
+                        'What is the username for the compromised system?',
+                        'What is the password for the second user?',
+                        'Which port is open for SSH access?'
+                    ]
+                }
+            ]
+        };
+
+        function loadModule(moduleName) {
+            const questionsDiv = document.getElementById('questions');
+            questionsDiv.innerHTML = '';
+
+            const moduleQuestions = modules[moduleName];
+            moduleQuestions.forEach((q) => {
+                const questionBox = document.createElement('div');
+                questionBox.className = 'question-box';
+
+                const mainQuestion = document.createElement('p');
+                mainQuestion.textContent = q.mainQuestion;
+                questionBox.appendChild(mainQuestion);
+
+                if (q.file) {
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = q.file;
+                    downloadLink.textContent = 'Download File';
+                    downloadLink.download = '';
+                    questionBox.appendChild(downloadLink);
+                }
+
+                q.subQuestions.forEach((subQ, index) => {
+                    const subQuestionDiv = document.createElement('div');
+                    subQuestionDiv.className = 'sub-question';
+
+                    const subQuestionText = document.createElement('p');
+                    subQuestionText.textContent = `${index + 1}. ${subQ}`;
+                    subQuestionDiv.appendChild(subQuestionText);
+
+                    const answerInput = document.createElement('input');
+                    answerInput.type = 'text';
+                    answerInput.id = `answer-${moduleName}-${index}`;
+                    answerInput.placeholder = 'Enter your answer';
+                    subQuestionDiv.appendChild(answerInput);
+
+                    const submitButton = document.createElement('button');
+                    submitButton.textContent = 'Submit';
+                    submitButton.onclick = () => submitAnswer(moduleName, index);
+                    subQuestionDiv.appendChild(submitButton);
+
+                    const result = document.createElement('p');
+                    result.className = 'result';
+                    result.id = `result-${moduleName}-${index}`;
+                    subQuestionDiv.appendChild(result);
+
+                    questionBox.appendChild(subQuestionDiv);
+                });
+
+                questionsDiv.appendChild(questionBox);
+            });
+        }
+
+        function submitAnswer(moduleName, questionIndex) {
+            const answer = document.getElementById(`answer-${moduleName}-${questionIndex}`).value;
 
             fetch('/validate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ answer, questionId: 2 }),
+                body: JSON.stringify({ moduleName, questionIndex, answer }),
             })
             .then((response) => response.json())
             .then((data) => {
-                const resultElement = document.getElementById('result2');
+                const resultElement = document.getElementById(`result-${moduleName}-${questionIndex}`);
                 if (data.correct) {
                     resultElement.style.color = 'green';
                     resultElement.textContent = 'Correct answer!';

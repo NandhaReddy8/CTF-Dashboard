@@ -6,19 +6,33 @@ const app = express();
 const PORT = 3000;
 
 // Hardcoded answers for simplicity
-const correctAnswers = {
-    1: 'securepassword123', // Example answer for Q1
-    2: 'Hello, World!', // Example answer for Q2
+const answers = {
+    networking: {
+        0: '199.0.0.0/16',
+        1: '199.0.0.1',
+        2: '199.0.255.254'
+    },
+    linux: {
+        0: 'binary-name',
+        1: 'root',
+        2: 'hidden-flag-content'
+    },
+    redteaming: {
+        0: 'compromised-user',
+        1: 'secure-password',
+        2: '22'
+    }
 };
 
 app.use(bodyParser.json());
-app.use(express.static('public')); // Serve static files (like the pcap file)
+app.use(express.static('public')); // Serve static files like sample.pcap, linux_dump.tar.gz, etc.
 
 // API endpoint for answer validation
 app.post('/validate', (req, res) => {
-    const { answer, questionId } = req.body;
+    const { moduleName, questionIndex, answer } = req.body;
 
-    if (answer === correctAnswers[questionId]) {
+    // Check if the answer matches the hardcoded correct answer
+    if (answers[moduleName] && answers[moduleName][questionIndex] === answer) {
         res.json({ correct: true });
     } else {
         res.json({ correct: false });
