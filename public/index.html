@@ -1,272 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CTF Dashboard</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(120deg, #84fab0, #8fd3f4);
-            color: #333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            overflow-x: hidden;
-            position: relative;
-        }
-        header {
-            background-color: #2c3e50;
-            color: #ecf0f1;
-            padding: 10px 20px;
-            text-align: center;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .sidebar {
-            width: 200px;
-            background-color: #34495e;
-            color: #ecf0f1;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            position: fixed;
-            top: 0;
-            left: -200px;
-            height: 100%;
-            transition: left 0.3s ease-in-out;
-            z-index: 1000;
-        }
-        .sidebar.open {
-            left: 0;
-        }
-        .sidebar button {
-            background-color: #3498db;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            color: white;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        .sidebar button:hover {
-            background-color: #2980b9;
-        }
-        .toggle-button {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background-color: #2c3e50;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            z-index: 1100;
-        }
-        .toggle-button:hover {
-            background-color: #34495e;
-        }
-        .content {
-            flex-grow: 1;
-            padding: 20px;
-            background: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-            max-width: 800px;
-            transition: margin-left 0.3s ease-in-out;
-            position: relative;
-            z-index: 10;
-        }
-        .question-box {
-            margin: 20px 0;
-            padding: 15px;
-            border: 1px solid #bdc3c7;
-            border-radius: 8px;
-            background: #f9f9f9;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .question-box p {
-            margin: 10px 0;
-        }
-        .sub-question {
-            margin-top: 15px;
-            padding: 10px;
-            background: #ecf9ff;
-            border-left: 4px solid #3498db;
-            border-radius: 5px;
-            position: relative;
-        }
-        .sub-question button {
-            margin-top: 5px;
-            background-color: #3498db;
-            border: none;
-            padding: 5px 10px;
-            color: white;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            position: absolute;
-            right: 10px;
-            top: 10px;
-        }
-        .sub-question button:hover {
-            background-color: #2980b9;
-        }
-        .result {
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        input[type="text"] {
-            width: calc(100% - 70px);
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capture The Flag (CTF) Dashboard</title>
+  <style>
+    /* Your existing styles */
+  </style>
 </head>
 <body>
-    <button class="toggle-button" onclick="toggleSidebar()">☰ Menu</button>
-    <div class="sidebar" id="sidebar">
-        <h2>Modules</h2>
-        <button onclick="loadModule('networking')">Module 1: Networking</button>
-        <button onclick="loadModule('linux')">Module 2: Linux File System</button>
-        <button onclick="loadModule('redteaming')">Module 3: Red Teaming Activities</button>
-    </div>
-
-    <div class="content" id="content">
-        <header>
-            <h1>Capture The Flag (CTF) Dashboard</h1>
-        </header>
-        <div class="question-box" id="questions">
-            <p>Select a module from the sidebar to begin!</p>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Capture The Flag (CTF) Dashboard</title>
+      <style>
+        /* General Styling */
+        body {
+          font-family: 'Arial', sans-serif;
+          margin: 0;
+          padding: 0;
+          background: linear-gradient(120deg, #fdfbfb, #ebedee);
+          color: #333;
+          overflow-x: hidden;
+        }
+    
+        header {
+          background: #4caf50;
+          color: white;
+          padding: 15px;
+          font-size: 1.5em;
+          text-align: center;
+          box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        /* Sidebar Styling */
+        .sidebar {
+          height: 100%;
+          width: 250px;
+          position: fixed;
+          z-index: 1000;
+          top: 0;
+          left: -250px;
+          background: linear-gradient(45deg, #43cea2, #185a9d);
+          overflow-x: hidden;
+          transition: 0.5s;
+          box-shadow: 4px 0 6px rgba(0, 0, 0, 0.2);
+        }
+    
+        .sidebar.open {
+          left: 0;
+        }
+    
+        .sidebar header {
+          font-size: 1.2em;
+          text-align: center;
+          padding: 15px;
+          color: white;
+          background: rgba(0, 0, 0, 0.2);
+          margin-bottom: 10px;
+        }
+    
+        .sidebar button {
+          display: block;
+          width: 80%;
+          margin: 10px auto;
+          padding: 10px;
+          background: white;
+          color: #185a9d;
+          font-weight: bold;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          text-align: left;
+          transition: 0.3s;
+        }
+    
+        .sidebar button:hover {
+          background: #185a9d;
+          color: white;
+        }
+    
+        /* Main Content Styling */
+        .content {
+          margin-left: 0;
+          padding: 20px;
+          transition: margin-left 0.5s;
+        }
+    
+        .content.shifted {
+          margin-left: 250px;
+        }
+    
+        /* Form Styling */
+        .module {
+          margin-bottom: 30px;
+          padding: 20px;
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    
+        .module h2 {
+          color: #185a9d;
+          margin-bottom: 10px;
+        }
+    
+        .module input[type="text"] {
+          width: calc(100% - 100px);
+          padding: 10px;
+          margin-right: 10px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+        }
+    
+        .module button {
+          padding: 10px 20px;
+          background: #4caf50;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+    
+        .module button:hover {
+          background: #43a047;
+        }
+    
+        .module a {
+          display: inline-block;
+          margin-top: 10px;
+          text-decoration: none;
+          color: #185a9d;
+          font-weight: bold;
+          transition: 0.3s;
+        }
+    
+        .module a:hover {
+          color: #4caf50;
+        }
+    
+        /* Toggle Theme Button */
+        .toggle-theme {
+          position: fixed;
+          top: 10px;
+          right: 10px;
+          background: #185a9d;
+          color: white;
+          padding: 10px 15px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+    
+        .toggle-theme:hover {
+          background: #4caf50;
+        }
+    
+        /* Animation */
+        .fade-in {
+          animation: fadeIn 1s ease-in-out;
+        }
+    
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <header>Capture The Flag (CTF) Dashboard</header>
+    
+      <div class="sidebar" id="sidebar">
+        <header>Menu</header>
+        <button onclick="showModule(1)">Module 1: Networking</button>
+        <button onclick="showModule(2)">Module 2: Linux File System</button>
+        <button onclick="showModule(3)">Module 3: Red Teaming Activities</button>
+      </div>
+    
+      <div class="content" id="content">
+        <button class="toggle-theme" id="toggleTheme" onclick="toggleSidebar()">☰ Menu</button>
+    
+        <div id="module1" class="module fade-in">
+          <h2>Module 1: Networking</h2>
+          <p>The network administrator was conducting a regular checkup on his network. While he was capturing packets, he found many ARP and TCP reset packets in his packet capture. He could not figure out what was wrong with it. So he decided to give the packet capture to the network security engineer to check what was wrong with the network. When the network security engineer gets the packet capture what will he do?
+    
+            <br/>You are required to download the ZIP file below, extract the PCAP file, list the observations and add screenshots if you find something interesting.</p>
+          <a href="./Files/Pcap file.zip" download>Download File</a>
+          <div>
+            <label for="question1">1. What is the Email you found in FTP Login?
+                hint: v**********007@hotmail.com (general email format)
+            </label><br>
+            <input type="text" id="answer1"><button onclick="validateAnswer(1)">Submit</button>
+          </div>
+          <div>
+            <label for="question2">2. What is the password for the user? found on same FTP request?
+                hint: ********** (10 characters)
+            </label><br>
+            <input type="text" id="answer2"><button onclick="validateAnswer(2)">Submit</button>
+          </div>
+          <div>
+            <label for="question3">3. As you observe, the request is basically from one Mac address (MITM attack),what is the mac address?.
+                hint: (aa:bb:cc:dd:11:22)format </label><br>
+            <input type="text" id="answer3"><button onclick="validateAnswer(3)">Submit</button>
+          </div>
         </div>
-    </div>
-
-    <script>
-        const sidebar = document.getElementById('sidebar');
-
+    
+        <div id="module2" class="module fade-in" style="display: none;">
+          <h2>Module 2: Linux File System</h2>
+          <p>Explore the Linux file system structure and permissions.</p>
+          <a href="#" download>Download File</a>
+          <div>
+            <label for="linux1">1. What command lists all files, including hidden ones?</label><br>
+            <input type="text" id="linux1"><button onclick="validateLinux(1)">Submit</button>
+          </div>
+          <div>
+            <label for="linux2">2. What is the root directory of Linux?</label><br>
+            <input type="text" id="linux2"><button onclick="validateLinux(2)">Submit</button>
+          </div>
+        </div>
+    
+        <div id="module3" class="module fade-in" style="display: none;">
+          <h2>Module 3: Red Teaming Activities</h2>
+          <p>Learn techniques used in red team operations to simulate advanced threats.</p>
+          <a href="#" download>Download File</a>
+          <div>
+            <label for="red1">1. What tool is used to simulate phishing attacks?</label><br>
+            <input type="text" id="red1"><button onclick="validateRed(1)">Submit</button>
+          </div>
+          <div>
+            <label for="red2">2. What is the common port for HTTP traffic?</label><br>
+            <input type="text" id="red2"><button onclick="validateRed(2)">Submit</button>
+          </div>
+        </div>
+      </div>
+    
+      <script>
+        let sidebar = document.getElementById('sidebar');
+        let content = document.getElementById('content');
+    
         function toggleSidebar() {
-            sidebar.classList.toggle('open');
+          sidebar.classList.toggle('open');
+          content.classList.toggle('shifted');
         }
-
-        const modules = {
-            networking: [
-                {
-                    mainQuestion: 'Bob and Alice are network administrators trying to figure out VLANs for specific roles (HR, Development, Accounts, Security). Analyze the network 199.0.0.0/16.',
-                    file: '/files/sample.pcap',
-                    subQuestions: [
-                        'What is the subnet of the network?',
-                        'What is the first address of the network?',
-                        'What is the last usable address of the network?'
-                    ]
-                }
-            ],
-            linux: [
-                {
-                    mainQuestion: 'Explore the Linux file system dump to find hidden flags.',
-                    file: '/files/linux_dump.tar.gz',
-                    subQuestions: [
-                        'What is the SUID binary found in the dump?',
-                        'What is the owner of the /etc/passwd file?',
-                        'What is the content of the secret file in /root?'
-                    ]
-                }
-            ],
-            redteaming: [
-                {
-                    mainQuestion: 'Simulate a pivot attack by analyzing credentials provided and accessing other systems.',
-                    file: '/files/credentials.txt',
-                    subQuestions: [
-                        'What is the username for the compromised system?',
-                        'What is the password for the second user?',
-                        'Which port is open for SSH access?'
-                    ]
-                }
-            ]
-        };
-
-        function loadModule(moduleName) {
-            const questionsDiv = document.getElementById('questions');
-            questionsDiv.innerHTML = '';
-
-            const moduleQuestions = modules[moduleName];
-            moduleQuestions.forEach((q) => {
-                const questionBox = document.createElement('div');
-                questionBox.className = 'question-box';
-
-                const mainQuestion = document.createElement('p');
-                mainQuestion.textContent = q.mainQuestion;
-                questionBox.appendChild(mainQuestion);
-
-                if (q.file) {
-                    const downloadLink = document.createElement('a');
-                    downloadLink.href = q.file;
-                    downloadLink.textContent = 'Download File';
-                    downloadLink.download = '';
-                    questionBox.appendChild(downloadLink);
-                }
-
-                q.subQuestions.forEach((subQ, index) => {
-                    const subQuestionDiv = document.createElement('div');
-                    subQuestionDiv.className = 'sub-question';
-
-                    const subQuestionText = document.createElement('p');
-                    subQuestionText.textContent = `${index + 1}. ${subQ}`;
-                    subQuestionDiv.appendChild(subQuestionText);
-
-                    const answerInput = document.createElement('input');
-                    answerInput.type = 'text';
-                    answerInput.id = `answer-${moduleName}-${index}`;
-                    answerInput.placeholder = 'Enter your answer';
-                    subQuestionDiv.appendChild(answerInput);
-
-                    const submitButton = document.createElement('button');
-                    submitButton.textContent = 'Submit';
-                    submitButton.onclick = () => submitAnswer(moduleName, index);
-                    subQuestionDiv.appendChild(submitButton);
-
-                    const result = document.createElement('p');
-                    result.className = 'result';
-                    result.id = `result-${moduleName}-${index}`;
-                    subQuestionDiv.appendChild(result);
-
-                    questionBox.appendChild(subQuestionDiv);
-                });
-
-                questionsDiv.appendChild(questionBox);
-            });
+    
+        function showModule(moduleNumber) {
+          let modules = document.querySelectorAll('.module');
+          modules.forEach(module => module.style.display = 'none');
+          document.getElementById(`module${moduleNumber}`).style.display = 'block';
         }
-
-        function submitAnswer(moduleName, questionIndex) {
-            const answer = document.getElementById(`answer-${moduleName}-${questionIndex}`).value;
-
-            fetch('/validate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ moduleName, questionIndex, answer }),
-            })
-            .then((response) => response.json())
-            .then((data) => {
-                const resultElement = document.getElementById(`result-${moduleName}-${questionIndex}`);
-                if (data.correct) {
-                    resultElement.style.color = 'green';
-                    resultElement.textContent = 'Correct answer!';
-                } else {
-                    resultElement.style.color = 'red';
-                    resultElement.textContent = 'Wrong answer, try again.';
-                }
-            })
-            .catch((error) => console.error('Error:', error));
+    
+        function validateAnswer(questionNumber) {
+          // Mock Validation Logic
+          alert(`Validating answer for Question ${questionNumber} in Module 1.`);
         }
-    </script>
+    
+        function validateLinux(questionNumber) {
+          alert(`Validating answer for Question ${questionNumber} in Module 2.`);
+        }
+    
+        function validateRed(questionNumber) {
+          alert(`Validating answer for Question ${questionNumber} in Module 3.`);
+        }
+      </script>
+    </body>
+    </html>
+    
+
+  <script>
+    let sidebar = document.getElementById('sidebar');
+    let content = document.getElementById('content');
+
+    function toggleSidebar() {
+      sidebar.classList.toggle('open');
+      content.classList.toggle('shifted');
+    }
+
+    function showModule(moduleNumber) {
+      let modules = document.querySelectorAll('.module');
+      modules.forEach(module => module.style.display = 'none');
+      document.getElementById(`module${moduleNumber}`).style.display = 'block';
+    }
+
+    function validateAnswer(module, question) {
+      const answer = document.getElementById(`answer${question}`).value;
+      fetch('http://localhost:3000/validate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ module: `module${module}`, question: `question${question}`, answer })
+      })
+      .then(response => response.json())
+      .then(data => alert(`Validation result: ${data.result}`))
+      .catch(error => console.error('Error:', error));
+    }
+
+    function validateLinux(questionNumber) {
+      validateAnswer(2, questionNumber);
+    }
+
+    function validateRed(questionNumber) {
+      validateAnswer(3, questionNumber);
+    }
+  </script>
 </body>
 </html>
